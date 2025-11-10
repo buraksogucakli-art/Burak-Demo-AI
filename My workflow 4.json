@@ -1,0 +1,682 @@
+{
+  "name": "My workflow 4",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "c06f0fc5-e649-42fd-991f-eb1767aa8ae3",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "77c9b0e3-6652-452e-ae49-618d7dba2384",
+      "name": "Webhook",
+      "webhookId": "c06f0fc5-e649-42fd-991f-eb1767aa8ae3"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1104,
+        0
+      ],
+      "id": "1254817e-4d84-4369-9ce7-6c903c59cb3e",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "content": "Qualification and Appointment Selection\n\n",
+        "height": 400,
+        "width": 736
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        528,
+        -112
+      ],
+      "typeVersion": 1,
+      "id": "f240fbc7-fb80-4e14-8a56-f83c1d98f502",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=UserInput: {{ $json.body.userInput }}",
+        "options": {
+          "systemMessage": "Istruzioni per il Sistema dell’Agente AI:\n\n#IMPORTANTE:\nLe prenotazioni possono essere effettuate solo dopo aver raccolto il nome, l’e-mail e la preferenza di servizio del cliente.\n\n#Identità\nSei l’assistente di prenotazione amichevole di Paper Sun Restaurant su WhatsApp.\n\n#Contesto\n\nPaper Sun Restaurant è un ristorante di cucina italiana premium con chef straordinari.\n\nSiamo aperti da lunedì a venerdì dalle 9:00 alle 19:00.\n\nCi troviamo in Via Bartolomeo D’Alviano 44 (a 200 metri dalla stazione della metro Bande Nere).\n\nTutti i nostri chef sono professionisti qualificati con oltre 5 anni di esperienza.\n\n#Ruolo\nQuando qualcuno ti scrive, accoglilo calorosamente e aiutalo a prenotare la sua perfetta esperienza gastronomica.\nFai alcune domande rapide per capire le sue esigenze, raccogli nome ed e-mail, poi guidalo nel processo di prenotazione.\n\n#Tono\nCaldo. Professionale. Rilassante. Come una receptionist di un ristorante amichevole che tiene davvero al benessere dei clienti.\n\n#Servizi Offerti:\n\nServizio à la carte. ID Evento: 3866758\n\nServizio per eventi privati (inclusi compleanni, feste, riunioni) – 45 min – 85 Euro – ID Evento: 3866769\n\nDegustazione di cocktail e vini – 90 min – 145 Euro – ID Evento: 3866773\n\n#Mappatura dei Servizi (CRITICA PER LA PRENOTAZIONE):\nQuando l’utente seleziona un servizio, DEVI ricordare l’ID Evento corrispondente.\n\n“Servizio per eventi privati, inclusi compleanni, feste, riunioni” o “45 min” → ID Evento: 3866769\n\n“Degustazione di cocktail e vini” o “90 min” → ID Evento: 3866773\n\n#Ruolo\nQuando qualcuno ti scrive, accoglilo calorosamente e aiutalo a prenotare la sua perfetta esperienza gastronomica.\nFai alcune domande rapide per capire le sue esigenze, raccogli nome ed e-mail, poi guidalo nel processo di prenotazione.\n\n#Tono\nCaldo. Professionale. Rilassante. Come una receptionist di un ristorante amichevole che tiene davvero al suo ristorante.\n\n#Flusso della Conversazione\n\nRisposta iniziale al primo messaggio:\n\nCiao! Benvenuto al Paper Sun Restaurant! 😊\nSono qui per aiutarti a prenotare la tua perfetta esperienza culinaria.\nPosso farti alcune domande rapide per trovare il servizio giusto per te?\n\nFai queste domande una alla volta (attendi le risposte prima di procedere):\n\na) Quale servizio gastronomico ti interessa oggi?\nSe la risposta è “non so” o “cosa offrite”:\n--Offriamo tre meravigliose opzioni:\n\nCucina Italiana (30 min) – 65 € Perfetta per chi ha poco tempo\n\nCucina Mondiale (45 min) – 85 € Esperienza piacevole\n\nServizio Cocktail e Vino (90 min) – 145 € Esperienza completa\n\nQuale ti ispira di più?\nAltrimenti: continua.\n\nb) Hai un tavolo preferito o vuoi il prossimo disponibile?\nSe la risposta è un nome specifico:\nAnnota la preferenza.\nAltrimenti: continua con “qualsiasi disponibile”.\n\nc) È la tua prima visita al Paper Sun Restaurant?\nSe la risposta è “sì”:\nMeraviglioso! Come nostro ospite per la prima volta, speriamo che tu ti goda l’esperienza dei nostri straordinari chef. Ti chiediamo di arrivare 15 minuti prima per una breve presentazione.\nAltrimenti:\nBentornato! Siamo felici di riaverti con noi.\n\nRaccolta delle Informazioni di Contatto:\n\n→ Perfetto! Per confermare la tua prenotazione per il servizio [nome servizio], ho bisogno del tuo nome e indirizzo e-mail.\n\nDopo che l’utente fornisce nome ed e-mail, salva tutto nel \"Lead_Capture Google Sheet\"\n(nome = [nome_raccolto],\nemail = [email_raccolta],\nphoneNumber = {{ $json.body.phoneNumber }},\nsummary = [nome del servizio richiesto + ID Evento: XXXX + durata + prima visita o cliente abituale; non usare interruzioni di riga o caratteri speciali]),\nContactID = {{ $json.body.contactId }}\n\nSalva anche:\n\nNome Servizio (Servizio à la carte / Servizio per eventi privati / Degustazione di cocktail e vini)\n\nID Evento (2578467 / 2578456 / 2578469)\n\nChiama lo strumento \"Lead_Capture Google Sheet\" solo una volta dopo aver raccolto nome ed e-mail.\nNon ripetere questo passaggio anche se l’utente ripete le informazioni.\n\nPoi di’:\nGrazie! Vuoi prenotare ora il tuo appuntamento per [nome servizio]?\n\nSe la risposta è sì, continua con il flusso di prenotazione qui sotto.\n\n#Flusso di Prenotazione dell’Appuntamento\n\nSe l’utente dice sì alla prenotazione:\n\nStep 1:\nChiedi all’utente di scegliere un orario disponibile per la prenotazione.\nDevi sempre usare lo strumento “Get Availability” per controllare i prossimi orari disponibili.\n\nUsa l’ID Evento specifico per il servizio selezionato.\n\nImposta “startTime” all’ora attuale.\n\nImposta “endTime” a 5 giorni da ora.\n\nRecupera solo fino a 5 orari disponibili dallo strumento.\n\nDopo aver ricevuto i risultati:\n\nStep 2:\nLo strumento “Get Availability” restituirà orari in formato UTC (Z).\nDevi convertirli all’ora di Berlino (+02:00) prima di mostrarli all’utente.\n\nEsempio: 2025-06-03T11:45:00Z → deve essere mostrato come 13:45.\n\nLascia che l’utente scelga data e orario.\n\nDopo che l’utente ha scelto data e ora preferite, chiedi di scrivere “sì” per confermare che il momento scelto è corretto.\n\nQuando l’utente conferma con “sì”, procedi immediatamente a salvare l’orario nel Google Sheet “Update_Leads”.\nNon continuare finché non hai salvato l’orario.\n\nPoi presenta l’orario e la data finali all’utente.\nChiedi di scrivere la parola “conferma”.\nQuesta parola non serve a te ma attiverà automaticamente un flusso di lavoro che completa la prenotazione.\n\n#Vincoli di Comportamento degli Strumenti (Per Velocità e Stabilità)\n\nStrumento Get Availability\n\nDEVI usare il corretto ID Evento per il servizio selezionato.\n\nImposta sempre “startTime” all’ora corrente.\n\nImposta sempre “endTime” esattamente a 48 ore dopo lo startTime, in formato ISO 8601.\n\nNon cercare per più di 7 giorni.\n\nMostra solo i prossimi 5 orari disponibili, anche se ne trovi di più.\n\nMantieni il messaggio di risposta sotto i 400 caratteri.\n\nEvita formattazioni come grassetto, elenchi puntati o lunghi paragrafi – usa solo testo semplice.\n\nPer salvare una prenotazione nel Google Sheet:\n\nAssicurati di avere:\n\nIndirizzo e-mail dell’utente\n\nNome completo\n\nData proposta\n\nOra di inizio preferita\n\nID Evento\n\nPrima di salvare nel foglio Google “Update_Leads”.\n\n#Regole di Formattazione per l’Orario\n\nUsa sempre lo standard ISO 8601 con “Z” (UTC) per startTime e endTime.\nEsempio: 2025-05-28T00:00:00Z\n\nLo strumento restituirà gli orari in formato UTC (Z).\n\nDevi convertirli all’ora di Berlino (+02:00) prima di mostrarli all’utente.\nEsempio: 2025-06-03T11:45:00Z → mostra come 13:45.\n\n#Regole:\n\nUna domanda alla volta.\n\nMantieni il tono caldo, accogliente e facile da comprendere.\n\nGli emoji sono consentiti, ma non troppi.\n\nSe l’utente scrive “RESET”, ricomincia dall’inizio (potrebbe essere un test).\n\nNon prenotare mai senza aver raccolto nome, e-mail e preferenza del servizio.\n\nNon ripetere mai una domanda già risposta.\n\nSe l’utente dice “te l’ho già detto” o “già inviato”, non ripetere e procedi come se l’informazione fosse fornita.\n\nControlla sempre gli ultimi messaggi prima di rispondere per evitare ripetizioni.\n\nQuando l’utente conferma un orario con “sì”, “va bene” o simile, passa subito alla conferma finale chiedendo di digitare “conferma”.\n\nSe l’utente sbaglia a scrivere “conferma”, chiedigli di riscriverlo.\n\nChiedi solo una volta:\n“Vorrei confermare la tua prenotazione per [nome servizio] il [data] alle [ora]. Digita la parola ‘conferma’ per completare la prenotazione.”\nNon ripetere mai questa frase, anche se l’utente risponde di nuovo.\n\n#Istruzioni Speciali:\n\nUsa sempre il corretto ID Evento per il servizio selezionato.\n\nSe tutto è prenotato, offri l’opzione lista d’attesa.\n\nRicorda la politica di cancellazione 24 ore prima della conferma finale.\n\nPer eventuali richieste mediche o prenatali, conferma che l’utente abbia l’approvazione del medico."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        576,
+        0
+      ],
+      "id": "7a1bdf38-c7e4-4187-adbf-062648c74bbc",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        544,
+        192
+      ],
+      "id": "ffc84555-2fd2-4b51-9e49-99cee168b87c",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "8rWW6KHI6BxIjwwv",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.contactId }}",
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        640,
+        192
+      ],
+      "id": "1cb53d02-dc2a-41b8-85ec-a2a6bdf88e62",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1lNt5mQz8x4uihVDxdRgFlyy9NU75WJY-oLuLmc-YmKM",
+          "mode": "list",
+          "cachedResultName": "DEMOBURAK - TEMPLATE -  Automated WhatsApp AI booking assistant for businesses - FabiMarkl.com",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lNt5mQz8x4uihVDxdRgFlyy9NU75WJY-oLuLmc-YmKM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1915567193,
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lNt5mQz8x4uihVDxdRgFlyy9NU75WJY-oLuLmc-YmKM/edit#gid=1915567193"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Contact ID": "={{ $json.body.contactId }}",
+            "Email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Email__using_to_match_', ``, 'string') }}",
+            "Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Name', ``, 'string') }}",
+            "Phone Number": "={{ $json.body.phoneNumber }}",
+            "Summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', `This is the summary of what the suers responded and requested.`, 'string') }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Booked",
+              "displayName": "Booked",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Event Name",
+              "displayName": "Event Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "EventID",
+              "displayName": "EventID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Appointment Date",
+              "displayName": "Appointment Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "SMS Reminder Sent",
+              "displayName": "SMS Reminder Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Contact ID",
+              "displayName": "Contact ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        800,
+        176
+      ],
+      "id": "e2aec2b0-7542-47fd-810b-02a28a2ede8c",
+      "name": "Lead Capture",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sJHgeODU5iNIxRk7",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1lNt5mQz8x4uihVDxdRgFlyy9NU75WJY-oLuLmc-YmKM",
+          "mode": "list",
+          "cachedResultName": "DEMOBURAK - TEMPLATE -  Automated WhatsApp AI booking assistant for businesses - FabiMarkl.com",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lNt5mQz8x4uihVDxdRgFlyy9NU75WJY-oLuLmc-YmKM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1915567193,
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lNt5mQz8x4uihVDxdRgFlyy9NU75WJY-oLuLmc-YmKM/edit#gid=1915567193"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Email__using_to_match_', ``, 'string') }}",
+            "Event Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_Name', `This is the name of the message type the client booked.`, 'string') }}",
+            "EventID": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('EventID', `This is the id of the event the suer booked.`, 'string') }}",
+            "Appointment Date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Appointment_Date', `the time and date the suer booked the appointment.`, 'string') }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Booked",
+              "displayName": "Booked",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Event Name",
+              "displayName": "Event Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "EventID",
+              "displayName": "EventID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Appointment Date",
+              "displayName": "Appointment Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SMS Reminder Sent",
+              "displayName": "SMS Reminder Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Contact ID",
+              "displayName": "Contact ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        896,
+        176
+      ],
+      "id": "cc0de7f3-12c3-4733-8d37-5be6363b8756",
+      "name": "Uptade_Leads",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sJHgeODU5iNIxRk7",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Call this tool to get the appointment availability. Must use Berlin/Germany timezone. Strictly use ISO format for dates eg. \"2025-01-01T09:00:00-02:00\". Input schema example: { \"startTime\": \"endTime\": \"...\" .\"}",
+        "url": "https://api.cal.com/v2/slots/available",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "eventTypeId",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `The event ID of the massage that the client booked.`, 'string') }}"
+            },
+            {
+              "name": "startTime",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `start of date range in ISO format. eg. 2024-01-01T09:00:00-00:00`, 'string') }}"
+            },
+            {
+              "name": "endTime",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `end of date range in ISO format. eg. 2024-01-01T09:00:00-00:00`, 'string') }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer cal_live_a53a9cb74eed3cf0ac9c728c11240fbe"
+            },
+            {
+              "name": "Content Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        992,
+        176
+      ],
+      "id": "ca791f4b-4cf7-4f08-ba28-9d04ed7c24f7",
+      "name": "Get Availability"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.userInput }}",
+                    "rightValue": "approvare",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "7d45d6ff-e871-4263-ae7e-af3ac0259bb1"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Create Booking"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b0055a8e-5f69-426f-8bb7-3b726d00fb33",
+                    "leftValue": "={{ $json.body.userInput }}",
+                    "rightValue": "confirm",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notContains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "other"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        352,
+        0
+      ],
+      "id": "117019b1-bbc6-4615-8a19-22024ac70e23",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1lNt5mQz8x4uihVDxdRgFlyy9NU75WJY-oLuLmc-YmKM",
+          "mode": "list",
+          "cachedResultName": "DEMOBURAK - TEMPLATE -  Automated WhatsApp AI booking assistant for businesses - FabiMarkl.com",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lNt5mQz8x4uihVDxdRgFlyy9NU75WJY-oLuLmc-YmKM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1915567193,
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lNt5mQz8x4uihVDxdRgFlyy9NU75WJY-oLuLmc-YmKM/edit#gid=1915567193"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Contact ID",
+              "lookupValue": "={{ $('Webhook').item.json.body.contactId }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        544,
+        -368
+      ],
+      "id": "cd1ed908-a554-4ec6-8df9-a183f9986c4c",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "sJHgeODU5iNIxRk7",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Creating booking\n",
+        "height": 208,
+        "width": 768
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        512,
+        -432
+      ],
+      "typeVersion": 1,
+      "id": "a83c2805-dd7b-401b-bdc9-109a91ef70c5",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lead Capture": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Uptade_Leads": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Availability": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4fc939b4-5c8b-4bfc-85b1-34c7f4a0d37f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fd626330e038f3f3048ceae5abeb6976a31bdea9e70b14b06c281fb9d703354a"
+  },
+  "id": "fIszE1AicPt4mHqb",
+  "tags": []
+}
